@@ -50,7 +50,7 @@ class Titanic:
         cur = self.db.cursor()
         if id:
             logger.info(f"Getting passenger with id {id}")
-            res = cur.execute(f"SELECT {cols} FROM titanic WHERE PassengerId = ?", [1])
+            res = cur.execute(f"SELECT {cols} FROM titanic WHERE PassengerId = ?", [id])
             results = [res.fetchone()]
         else:
             logger.info(f"Getting {limit} passengers")

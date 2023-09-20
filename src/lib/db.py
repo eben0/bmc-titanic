@@ -8,6 +8,7 @@ from lib.config import Config
 
 logger = logging.getLogger(__name__)
 
+
 # db class to wrap the sqlite object
 class Db:
     __instance = None
@@ -40,10 +41,15 @@ class Db:
         self.import_csv()
 
     def import_csv(self):
-        logger.info("importing into Sqlite from CSV")
-        conn = self.get_db()
-        df = pd.read_csv(self.config.get("csv"))
-        df.to_sql(self.config.get("table"), conn, if_exists="append", index=False)
+        try:
+            csv_file = self.config.get("csv")
+            logger.info(f"importing into Sqlite from CSV {csv_file}")
+            conn = self.get_db()
+            df = pd.read_csv(csv_file)
+            df.to_sql(self.config.get("table"), conn, if_exists="append", index=False)
+            logger.info(f"import finished")
+        except ValueError as e:
+            logger.error("Unable to import CSV", e)
 
     @staticmethod
     def dict_factory(cursor, row):

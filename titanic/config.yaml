@@ -4,13 +4,13 @@ TESTING: false
 dataSource: db # or csv
 
 db:
-  csv: ../assets/titanic.csv
-  file: ../data/titanic.db
+  csv: /app/assets/titanic.csv
+  file: /app/data/titanic.db
   table: titanic
   # percentiles.sql: ./assets/percentiles.sql
 
-swagger: ../assets/swagger.yaml
+swagger: /app/assets/swagger.yaml
 
 logger:
   name: Titanic
-  level: DEBUG
+  level: INFO

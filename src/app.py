@@ -11,6 +11,10 @@ try:
     # create logger
     config = Config.instance().all()
     Logger.setup()
+
+    # init the db, load csv into sqlite
+    Db.instance().init_db()
+
     app = Flask(__name__)
     app.logger.info("Titanic Leaving the dock...")
     app.config.update(config)
@@ -21,9 +25,7 @@ try:
     app.register_blueprint(swagger_bp)
     app.register_blueprint(swaggerui_bp)
 
-    # init the db, load csv into sqlite
-    Db.instance().init_db()
-
     app.logger.info("Titanic is cruising now. Have fun.")
 except Exception as e:
+    print(e)
     print("Oopsie, it looks like we hit that iceberg once again")
