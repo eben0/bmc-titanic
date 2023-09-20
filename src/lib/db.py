@@ -1,3 +1,4 @@
+import os
 import sqlite3
 
 # from flask import g, current_app
@@ -27,11 +28,17 @@ class Db:
     def get_db(self):
         db = Db.__client
         if db is None:
-            logger.info("initiating database")
-            Db.__client = db = sqlite3.connect(
-                self.config.get("file"), check_same_thread=False
-            )
-            db.row_factory = Db.dict_factory
+            db_file = os.path.realpath(self.config.get("file"))
+            logger.info(f"Connecting to db {db_file}")
+            folder = os.path.dirname(db_file)
+            if not os.path.exists(folder):
+                os.mkdir(folder)
+            try:
+                Db.__client = db = sqlite3.connect(db_file, check_same_thread=False)
+                db.row_factory = Db.dict_factory
+            except sqlite3.OperationalError as e:
+                logger.error(e)
+                raise e
         return db
 
     def cursor(self):
