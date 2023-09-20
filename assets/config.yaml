@@ -1,0 +1,16 @@
+DEBUG: false
+TESTING: false
+
+dataSource: db # or csv
+
+db:
+  csv: ../assets/titanic.csv
+  file: ../assets/titanic.db
+  table: titanic
+  # percentiles.sql: ./assets/percentiles.sql
+
+swagger: ../assets/swagger.yaml
+
+logger:
+  name: Titanic
+  level: DEBUG

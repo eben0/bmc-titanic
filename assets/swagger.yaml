@@ -1,0 +1,73 @@
+openapi: 3.0.3
+info:
+  title: Titanic API
+  description: Titanic API
+  version: 1.0.0
+servers:
+  - url: 'http://127.0.0.1'
+  - url: 'https://titanic.bmc.com'
+paths:
+  /:
+    get:
+      responses:
+        default:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /api/prices:
+    get:
+      parameters:
+        - in:  query
+          name: quantiles
+          schema:
+            type: string
+          description: List of quantiles to return separated by comma
+          example: 0.25,0.5
+      responses:
+        default:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+
+  /api/passengers/{id}:
+    get:
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: Passenger ID
+        - in: query
+          name: cols
+          schema:
+            type: string
+          description: List of columns to return by comma
+          example: PassengerId,Fare,Age
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Limit results
+          example: 100
+      responses:
+        default:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+components:
+  schemas:
+    Response:
+      type: object
+      properties:
+        error:
+          type: string
+        results:
+          type: array
+      example: {error: "null", results: []}
+
