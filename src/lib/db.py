@@ -77,7 +77,7 @@ class Db:
             df = pd.read_csv(csv_file)
             # import the csv, add new entries if they do not exists,
             # otherwise crete the table and insert
-            df.to_sql(self.config.get("table"), conn, if_exists="append", index=False)
+            df.to_sql(self.config.get("table"), conn, if_exists="replace", index=False)
             logger.info(f"import finished")
         except ValueError as e:
             logger.error("Unable to import CSV", e)
