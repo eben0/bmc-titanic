@@ -10,12 +10,8 @@ services:
   iceberg:
     image: python:3.10-alpine
     command: python /app/iceberg.py
-    ports:
-      - "8080:9080"
     volumes:
       - data:/app/data
       - ./src/iceberg.py:/app/iceberg.py
-
-
 volumes:
   data:
