@@ -49,7 +49,7 @@ class Titanic:
             attrs = cols.split(",")
             for attr in attrs:
                 if attr not in titanic_schema:
-                    attrs.pop()
+                    attrs.remove(attr)
 
             if len(attrs) > 0:
                 query_attrs = ",".join(attrs)
