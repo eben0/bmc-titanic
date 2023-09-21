@@ -14,9 +14,9 @@ def json_response(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         try:
-            return jsonify(error=None, result=f(*args, **kwargs))
+            return jsonify(error=None, results=f(*args, **kwargs))
         except Exception as e:
             logging.getLogger().error(f"{request.path} error", e)
-            return jsonify(error=str(e), result=[]), 500
+            return jsonify(error=str(e), results=[]), 500
 
     return decorated_function

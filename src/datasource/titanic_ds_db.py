@@ -1,4 +1,5 @@
 import logging
+import numpy as np
 from typing import List, Dict
 
 import pandas as pd
@@ -13,7 +14,7 @@ logger = logging.getLogger()
 # sqlite datasource
 class TitanicDatasourceDb:
     def __init__(self):
-        self.db = Db.instance().get_db()
+        self.db = Db.instance()
         self.config = Config.instance().all()
 
     def get_passengers(self, id=None, cols="", limit=1) -> List[Dict]:
@@ -43,6 +44,4 @@ class TitanicDatasourceDb:
         gets the data from sqlite
         :return: dataframe of prices
         """
-        cur = self.db.cursor()
-        res = cur.execute(f"SELECT Fare from titanic")
-        return pd.DataFrame.from_records(data=res.fetchall())
+        return self.db.dataframe("SELECT Fare FROM titanic")

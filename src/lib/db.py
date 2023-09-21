@@ -1,9 +1,8 @@
 import os
 import sqlite3
-
-# from flask import g, current_app
-import pandas as pd
 import logging
+
+import pandas as pd
 
 from lib.config import Config
 
@@ -60,6 +59,12 @@ class Db:
         """
         return self.get_db().cursor()
 
+    def dataframe(self, sql, **kwargs):
+        self.disable_dict()
+        df = pd.read_sql(sql=sql, con=self.__client, **kwargs)
+        self.enable_dict()
+        return df
+
     def init_db(self):
         """
         init the db by importing data from CSV
@@ -81,6 +86,12 @@ class Db:
             logger.info(f"import finished")
         except ValueError as e:
             logger.error("Unable to import CSV", e)
+
+    def enable_dict(self):
+        self.__client.row_factory = Db.dict_factory
+
+    def disable_dict(self):
+        self.__client.row_factory = None
 
     @staticmethod
     def dict_factory(cursor, row):

@@ -5,7 +5,6 @@ import pandas as pd
 from pandas import DataFrame
 
 from lib.config import Config
-from lib.db import Db
 
 logger = logging.getLogger()
 
@@ -13,7 +12,6 @@ logger = logging.getLogger()
 # CSV datasource
 class TitanicDatasourceCSV:
     def __init__(self):
-        self.db = Db.instance().get_db()
         self.config = Config.instance().all()
         self.csv_df = self.read_csv_df()
 
