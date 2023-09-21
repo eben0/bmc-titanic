@@ -1,3 +1,4 @@
+# this file is just to demonstrate how to share data between containers
 if __name__ == "__main__":
     import sqlite3
     DB_PATH = "/app/data/titanic.db"

@@ -1,3 +1,4 @@
+# The main Flask app
 from flask import Flask
 from lib.logger import Logger
 

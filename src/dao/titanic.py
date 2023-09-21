@@ -1,27 +1,24 @@
 import logging
 from typing import List, Dict
 
-import pandas as pd
-from pandas import DataFrame
-
 from dao.schema import titanic_schema
+from datasource.Datasource import Datasource
 from lib.config import Config
-from lib.db import Db
 
-DATA_SOURCE_DB = "db"
-DATA_SOURCE_CSV = "csv"
-
-DEFAULT_QUANTILES = [0.25, 0.5, 0.75, 1]
+DEFAULT_QUANTILES = [
+    0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4,
+    0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8,
+    0.85, 0.9, 0.95, 1
+]
+DEFAULT_LIMIT = 100
 
 logger = logging.getLogger()
 
 
 class Titanic:
     def __init__(self):
-        self.db = Db.instance().get_db()
         self.config = Config.instance().all()
-        self.csv_df = self.read_csv_df()
-        self.data_source = self.config.get("dataSource", DATA_SOURCE_DB)
+        self.data_source = Datasource.load()
 
     def get_passengers(self, id, request) -> List[Dict]:
         """
@@ -33,52 +30,12 @@ class Titanic:
         logger.info(f"Calling get_passengers with id {id}")
         # making sure this column exists in the db to avoid injection
         cols = self.filter_qs_cols(request.args.get("cols"))
-        limit = Db.get_limit(request.args.get("limit"))
-        if self.data_source == DATA_SOURCE_DB:
-            return self.get_passengers_from_db(id, cols, limit)
-        elif self.data_source == DATA_SOURCE_CSV:
-            return self.get_passengers_from_csv(id, cols, limit)
-
-    def get_passengers_from_db(self, id=None, cols="", limit=1) -> List[Dict]:
-        """
-        gets passengers from sqlite
-        :param id: passenger id
-        :param cols: list column separated by comma
-        :param limit: number of records to return
-        :return: passengers list
-        """
-        cur = self.db.cursor()
-        if id:
-            logger.info(f"Getting passenger with id {id}")
-            res = cur.execute(f"SELECT {cols} FROM titanic WHERE PassengerId = ?", [id])
-            results = [res.fetchone()]
-        else:
-            logger.info(f"Getting {limit} passengers")
-            res = cur.execute(
-                f"SELECT {cols} FROM titanic LIMIT ?",
-                [limit],
-            )
-            results = res.fetchall()
-        return results
-
-    def get_passengers_from_csv(self, id=None, cols="", limit=1) -> List[Dict]:
-        """
-        gets passengers from csv as dataframe
-        :param id: passenger id
-        :param cols: list column separated by comma
-        :param limit: number of records to return
-        :return: passengers list
-        """
-        if id:
-            # get by id
-            results = self.csv_df.loc[self.csv_df["PassengerId"] == int(id)]
-        else:
-            results = self.csv_df.iloc[0 : int(limit)]
-        if cols != "*":
-            cols = cols.split(",")
-            # filter the cols
-            results = results[[*cols]]
-        return results.fillna(0).to_dict("records")
+        limit = self.get_limit(request.args.get("limit"))
+        try:
+            return self.data_source.get_passengers(id, cols, limit)
+        except Exception as e:
+            logger.error("Unable to get passengers from datasource", e)
+            raise e
 
     def filter_qs_cols(self, cols: str):
         """
@@ -120,11 +77,12 @@ class Titanic:
         # calc
         qs = df[col].quantile(quantiles)
         i = 0
+        # create the list
         for q in qs:
             results.append({"y": quantiles[i] * 100, "x": q})
             i += 1
 
-        logger.debug(f"prices_quantile result", results)
+        logger.debug(f"prices_quantile result {results}")
         return results
 
     def get_prices_dataframe(self):
@@ -132,29 +90,12 @@ class Titanic:
         gets the proces as pandas dataframe
         :return: dataframe of prices
         """
-        if self.data_source == DATA_SOURCE_DB:
-            try:
-                # gets the data from sqlite
-                return self.get_prices_from_db()
-            except Exception as e:
-                logger.error("Unable to load records from db", e)
-                raise e
-        elif self.data_source == DATA_SOURCE_CSV:
-            # returns the csv dataframe from memory
-            return self.csv_df
-        else:
-            err = f"{self.data_source} not supported"
-            logger.error(err)
-            raise err
-
-    def get_prices_from_db(self) -> DataFrame:
-        """
-        gets the data from sqlite
-        :return: dataframe of prices
-        """
-        cur = self.db.cursor()
-        res = cur.execute(f"SELECT Fare from titanic")
-        return pd.DataFrame.from_records(data=res.fetchall())
+        try:
+            # gets the datasource
+            return self.data_source.get_prices()
+        except Exception as e:
+            logger.error("Unable to load records from datasource", e)
+            raise e
 
     def parse_quantiles_from_string(self, quantiles_str):
         """
@@ -174,13 +115,15 @@ class Titanic:
         logger.debug(f"quantiles: {quantiles} ")
         return quantiles
 
-    def read_csv_df(self) -> DataFrame:
+    def get_limit(self, limit=DEFAULT_LIMIT):
         """
-        reads csv into dataframe
-        :return: pandas dataframe
+        gets and normalizes the limit value
+        :param limit: limit
+        :return: limit
         """
         try:
-            return pd.read_csv(self.config.get("db", {}).get("csv"))
-        except Exception as e:
-            logger.error("Unable to load records from csv")
-            return pd.DataFrame.from_records([])
+            if limit is None:
+                return DEFAULT_LIMIT
+            return int(limit)
+        except ValueError:
+            return DEFAULT_LIMIT

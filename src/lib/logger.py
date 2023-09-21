@@ -9,6 +9,9 @@ config = Config.instance().get("logger")
 class Logger:
     @staticmethod
     def setup():
+        """
+        basic logger setup
+        """
         logging.basicConfig(
             format="%(asctime)s [%(levelname)-4s] %(message)s",
             level=config.get("level", logging.INFO),

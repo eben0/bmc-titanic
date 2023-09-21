@@ -4,8 +4,7 @@ This is Python Flask app that serves the Titanic api
 
 ## Prerequisites
 1. Python3 (3.9+ is recommended)
-2. Boarding ticket to the Titanic 
-3. Docker (optional)
+2. Docker (optional)
 
 ## Run the app locally
 1. Create virtual env

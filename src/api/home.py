@@ -1,10 +1,13 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint
 
-home_bp = Blueprint('home_bp', __name__, url_prefix="/")
+from lib.decorator import json_response
+
+home_bp = Blueprint("home_bp", __name__, url_prefix="/")
 
 
 # /
 # everyone needs a home
-@home_bp.route('/')
+@home_bp.route("/")
+@json_response
 def index():
-    return jsonify(error=None, results=["Welcome to the Titanic API"])
+    return ["Welcome to the Titanic API"]
