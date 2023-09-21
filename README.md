@@ -12,11 +12,11 @@ This is Python Flask app that serves the Titanic api
 python -m venv venv
 source ./venv/bin/activate # (Linux & Mac)
 ```
-1. Install dependencies
+2. Install dependencies
 ```
 pip install -r src/requirements
 ```
-2. Run the app
+3. Run the app
 ```
 cd src/
 python main.py
