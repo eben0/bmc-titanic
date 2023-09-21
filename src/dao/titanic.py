@@ -2,7 +2,7 @@ import logging
 from typing import List, Dict
 
 from dao.schema import titanic_schema
-from datasource.Datasource import Datasource
+from datasource.datasource import Datasource
 from lib.config import Config
 
 DEFAULT_QUANTILES = [

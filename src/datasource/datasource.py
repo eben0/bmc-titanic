@@ -1,7 +1,7 @@
 from typing import Union
 
-from datasource.titanic_ds_db import TitanicDatasourceDb
-from datasource.titanic_ds_csv import TitanicDatasourceCSV
+from .titanic_ds_db import TitanicDatasourceDb
+from .titanic_ds_csv import TitanicDatasourceCSV
 from lib.config import Config
 
 
