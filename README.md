@@ -31,7 +31,16 @@ docker compose up --build
 2. Open the browser at http://127.0.0.1:8080/api/docs
 
 ## Deploy
-1. To deploy to Kubernetes cluster, you may use helm
+1. Build the docker image
+```
+docker build . -t bmc-titanic:latest
+```
+3. If needed, change the image in titanic-chart/values.yaml
+```
+image:
+  repository: bmc-titanic:latest
+```
+4. Use Helm to deploy to a Kubernetes cluster
 ```
  helm install bmc-titanic titanic-chart --namespace bmc
 ```
