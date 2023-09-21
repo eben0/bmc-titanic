@@ -35,16 +35,16 @@ docker compose up --build
 ```
 docker build . -t bmc-titanic:latest
 ```
-3. If needed, change the image in titanic-chart/values.yaml
+2. If needed, change the image in titanic-chart/values.yaml
 ```
 image:
   repository: bmc-titanic:latest
 ```
-4. Use Helm to deploy to a Kubernetes cluster
+3. Use Helm to deploy to a Kubernetes cluster
 ```
  helm install bmc-titanic titanic-chart --namespace bmc
 ```
-2. Check logs
+4. Check logs
 ```
 ~ kubectl -n bmc get pods
 NAME                           READY   STATUS    RESTARTS   AGE
