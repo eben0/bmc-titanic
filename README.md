@@ -21,7 +21,7 @@ pip install -r src/requirements
 cd src/
 python main.py
 ```
-3. Open the browser at http://127.0.0.1:8080/api/docs
+4. Open the browser at http://127.0.0.1:8080/api/docs
 
 ## Run with Docker Compose
 1. Build and run
