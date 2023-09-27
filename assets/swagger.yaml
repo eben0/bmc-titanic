@@ -4,7 +4,7 @@ info:
   description: Titanic API
   version: 1.0.0
 servers:
-  - url: 'http://127.0.0.1'
+  - url: 'http://127.0.0.1:8080'
   - url: 'https://titanic.bmc.com'
 paths:
   /:
@@ -45,7 +45,30 @@ paths:
           name: cols
           schema:
             type: string
-          description: List of columns to return by comma
+          description: List of columns to return separated by comma
+          example: PassengerId,Fare,Age
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Limit results
+          example: 100
+      responses:
+        default:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+
+  /api/passengers:
+    get:
+      parameters:
+        - in: query
+          name: cols
+          schema:
+            type: string
+          description: List of columns to return separated by comma
           example: PassengerId,Fare,Age
         - in: query
           name: limit
